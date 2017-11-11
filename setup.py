@@ -4,11 +4,24 @@ from numpy import get_include as get_numpy_include
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 
+__version__ = '0.0.1'
+
+def get_eigen_include():
+    eigen_inc = os.path.join(os.path.dirname(__file__), 'lib', 'eigen')
+    assert os.path.exists(eigen_inc)
+    return eigen_inc
+
 
 def get_pybind_include():
-    pybind_inc = os.path.join(os.path.dirname(__file__), 'pybind11', 'include')
+    pybind_inc = os.path.join(os.path.dirname(__file__), 'lib', 'pybind11', 'include')
     assert os.path.exists(pybind_inc)
     return pybind_inc
+
+
+def get_spdlog_include():
+    spdlog_inc = os.path.join(os.path.dirname(__file__), 'lib', 'spdlog', 'include')
+    assert os.path.exists(spdlog_inc)
+    return spdlog_inc
 
 
 def get_project_include():
@@ -19,11 +32,11 @@ def get_project_include():
 
 ext_modules = [
     Extension(
-        'estimator_skeleton.estimator_tools',
-        sources=['cpp/estimator_tools_module.cpp', 'cpp/estimator_tools.cpp'],
+        'pynumtools.pynumtools_binding',
+        sources=['cpp/binding.cpp'],
         language='c++',
         include_dirs=[
-            get_pybind_include(), get_project_include(), get_numpy_include()
+            get_pybind_include(), get_project_include(), get_numpy_include(), get_spdlog_include(), get_eigen_include()
         ],
         extra_compile_args=['-std=c++14', '-O3', '-fvisibility=hidden']
     ),
@@ -45,6 +58,7 @@ class BuildExt(build_ext):
         opts.append('-fvisibility=hidden')
         opts.append('-std=c++14')
         opts.append('-O3')
+        opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
         for ext in self.extensions:
             ext.extra_compile_args = opts
         build_ext.build_extensions(self)
@@ -52,7 +66,7 @@ class BuildExt(build_ext):
 
 setup(
     name='PyNumTools',
-    version='0.0.1',
+    version=__version__,
     author='Moritz Hoffmann',
     author_email='clonker at gmail.com',
     url='https://github.com/clonker/PyNumTools',
