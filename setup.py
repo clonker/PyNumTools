@@ -33,7 +33,7 @@ def get_project_include():
 ext_modules = [
     Extension(
         'pynumtools.pynumtools_binding',
-        sources=['cpp/binding.cpp'],
+        sources=['cpp/binding.cpp', 'cpp/lgmres.cpp'],
         language='c++',
         include_dirs=[
             get_pybind_include(), get_project_include(), get_numpy_include(), get_spdlog_include(), get_eigen_include()
