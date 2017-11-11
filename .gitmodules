@@ -1,0 +1,9 @@
+[submodule "lib/pybind11"]
+	path = lib/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "lib/spdlog"]
+	path = lib/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "lib/eigen"]
+	path = lib/eigen
+	url = https://github.com/RLovelett/eigen.git
