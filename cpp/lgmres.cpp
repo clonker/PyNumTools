@@ -51,7 +51,7 @@ auto qr_append(Eigen::Ref<Matrix> Q, Eigen::Ref<Matrix> R, Eigen::Ref<Matrix> u)
 }
 }
 
-Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Eigen::Ref<Vec> x0, double tol, std::size_t maxiter,
+Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::size_t maxiter,
            Matrix M, std::size_t inner_m, std::size_t outer_k, std::vector<std::tuple<Vec, Vec>> &outer_v,
            bool storeOuterAv) {
 
