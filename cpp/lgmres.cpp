@@ -187,7 +187,7 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
             // todo check if y is finite, otherwise bail
 
             Vec dx = y(0) * ws[0];
-            for (auto i=1; i<y.size(); ++i) {
+            for (auto i=1; i<std::min(static_cast<std::size_t>(y.size()), static_cast<std::size_t>(ws.size())); ++i) {
                 auto &yi = y(i);
                 auto &w = ws[i];
                 dx += yi * w;
@@ -199,13 +199,14 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
                     // todo
                     Vec q = Q * R * y;
                     Vec ax = vs[0]*q[0];
-                    for (auto i = 1; i < ax.size(); ++i) {
+                    for (auto i = 1; i < std::min(static_cast<std::size_t>(vs.size()),
+                                                  static_cast<std::size_t>(q.size())); ++i) {
                         ax += q(i) * vs[i];
                     }
-                    outer_v.push_back(std::make_tuple(dx / nx, ax / nx));
+                    outer_v.emplace_back(std::make_tuple(dx / nx, ax / nx));
                 } else {
                     Vec empty;
-                    outer_v.push_back(std::make_tuple(dx / nx, empty));
+                    outer_v.emplace_back(std::make_tuple(dx / nx, empty));
                 }
             }
 
