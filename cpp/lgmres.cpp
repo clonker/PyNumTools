@@ -30,10 +30,12 @@
  * @copyright GNU Lesser General Public License v3.0
  */
 #include "lgmres.h"
+#include "util.h"
 #include <spdlog/fmt/fmt.h>
 #include <Eigen/QR>
 #include <Eigen/SVD>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace pnt {
 
@@ -51,14 +53,67 @@ auto qr_append(Eigen::Ref<Matrix> Q, Eigen::Ref<Matrix> R, Eigen::Ref<Matrix> u)
 }
 }
 
+SpVec spLgmres(Eigen::Ref<SpMatrix> A, Eigen::Ref<SpVec> b, Eigen::Ref<SpVec> x0, double tol, std::size_t maxiter,
+               Eigen::Ref<SpMatrix> M, std::size_t inner_m, std::size_t outer_k,
+               std::vector<std::tuple<Vec, Vec>> &outer_v, bool storeOuterAv) {
+    auto log = spdlog::stdout_color_mt("console");
+    log->set_level(spdlog::level::debug);
+
+    SparseSystem system (A, M, x0, b);
+
+    auto N = A.rows();
+
+    auto matvec = [&system](const SpVec &vec) {
+        return system.call(vec);
+    };
+    auto psolve = [&system](const SpVec &vec) {
+        return system.prec(vec);
+    };
+
+    auto bNorm = b.norm();
+    if(bNorm == 0) {
+        bNorm = 1;
+    }
+
+    SpVec x = system.x0();
+
+    for(std::size_t k_outer = 0; k_outer < maxiter; ++k_outer) {
+        SpVec rOuter = matvec(x) - system.b();
+
+        auto rNorm = rOuter.norm();
+
+        // check stopping criterion
+        if(rNorm <= tol * bNorm || rNorm <= tol) {
+            break;
+        }
+
+        // inner lgmres iteration
+        SpVec v0 = -psolve(rOuter);
+        auto innerRes0 = v0.norm();
+
+        if (innerRes0 == 0) {
+            auto rnorm = rOuter.norm();
+            throw std::runtime_error(fmt::format("Preconditioner returned a zero vector; |v| ~ {}, |M v| = 0))",
+                                                 rnorm));
+        }
+
+        v0 /= innerRes0;
+
+    }
+
+    return x;
+}
+
 Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::size_t maxiter,
            Matrix M, std::size_t inner_m, std::size_t outer_k, std::vector<std::tuple<Vec, Vec>> &outer_v,
            bool storeOuterAv) {
 
-    auto n = b.size();
+    auto console = spdlog::stdout_color_mt("console");
+    console->set_level(spdlog::level::debug);
 
+    auto n = b.size();
     Vec x = x0;
-    if(x.rows() == 0 && x.cols() == 0) {
+    if(x.rows() == 0 || x.cols() == 0) {
         x = Vec::Zero(n);
     }
 
@@ -108,7 +163,7 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
         for(; j < 1 + inner_m + outer_v.size(); ++j) {
             //     ++ evaluate
             Vec z;
-            Vec v_new;
+            Vec v_new(0);
             if (j < outer_v.size() + 1) {
                 z = std::get<0>(outer_v.at(j-1));
                 v_new = std::get<1>(outer_v.at(j-1));
@@ -118,7 +173,7 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
                 z = vs.back();
             }
 
-            if(v_new.rows() == 0 && v_new.cols() == 0) {
+            if(v_new.rows() == 0 || v_new.cols() == 0) {
                 v_new = M * (A * z);
             }
             //     ++ orthogonalize
@@ -187,7 +242,8 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
             // todo check if y is finite, otherwise bail
 
             Vec dx = y(0) * ws[0];
-            for (auto i=1; i<std::min(static_cast<std::size_t>(y.size()), static_cast<std::size_t>(ws.size())); ++i) {
+            for (std::size_t i=1; i<std::min(static_cast<std::size_t>(y.size()),
+                                             static_cast<std::size_t>(ws.size())); ++i) {
                 auto &yi = y(i);
                 auto &w = ws[i];
                 dx += yi * w;
@@ -199,9 +255,11 @@ Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::siz
                     // todo
                     Vec q = Q * R * y;
                     Vec ax = vs[0]*q[0];
-                    for (auto i = 1; i < std::min(static_cast<std::size_t>(vs.size()),
-                                                  static_cast<std::size_t>(q.size())); ++i) {
-                        ax += q(i) * vs[i];
+                    console->debug("vs[0] = ({}, {}, {})", vs[0](0), vs[0](1), vs[0](2));
+                    console->debug("vs[1] = ({}, {}, {})", vs[1](0), vs[1](1), vs[1](2));
+                    for (std::size_t i = 1; i < std::min(static_cast<std::size_t>(vs.size()),
+                                                         static_cast<std::size_t>(q.size())); ++i) {
+                        ax += q[i] * vs[i];
                     }
                     outer_v.emplace_back(std::make_tuple(dx / nx, ax / nx));
                 } else {
