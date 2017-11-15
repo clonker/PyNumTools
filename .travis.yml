@@ -34,5 +34,3 @@ install:
   elif [ -n "$CONDA" ]; then
     conda build conda.recipe
   fi
-script:
-- python pynumtools/test/test_lgmres.py
