@@ -34,6 +34,7 @@
 #include <spdlog/fmt/fmt.h>
 #include <Eigen/QR>
 #include <Eigen/SVD>
+#include <Eigen/IterativeLinearSolvers>
 #include <iostream>
 #include <spdlog/spdlog.h>
 
@@ -64,7 +65,7 @@ namespace sparse {
 ArnoldiResult<SpVec> arnoldi(const system::MatVec<SpVec> &matvec, const SpVec &v0, std::size_t m, double atol,
                              const system::MatVec<SpVec> &rpsolve, std::vector<std::tuple<Vec, Vec>> &outer_v,
                              bool prependOuterV) {
-    auto log = spdlog::get("console");
+    // auto log = spdlog::get("console");
 
     auto lpsolve = [](const auto &x) { return x; };
 
@@ -172,7 +173,12 @@ ArnoldiResult<SpVec> arnoldi(const system::MatVec<SpVec> &matvec, const SpVec &v
         Matrix lsqR = result.R.topLeftCorner(j+1, j+1);
         Matrix lsqQ = result.Q.topLeftCorner(1, j+1).transpose();
 
-        result.y = lsqR.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV).solve(lsqQ);
+        // result.y = lsqR.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV).solve(lsqQ);
+        // result.y = lsqR.householderQr().solve(lsqQ);
+        Eigen::LeastSquaresConjugateGradient<Matrix, Eigen::IdentityPreconditioner> lscg;
+        lscg.setMaxIterations(10*lsqR.cols());
+        lscg.compute(lsqR);
+        result.y = lscg.solve(lsqQ);
     }
 
     return result;

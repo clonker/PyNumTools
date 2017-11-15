@@ -27,4 +27,4 @@ before_install:
   conda create -q -n test-environment python=$CONDA
   source activate test-environment
 install:
-- conda build conda.recipe
+- conda build -c conda-forge conda.recipe
