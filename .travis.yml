@@ -27,10 +27,4 @@ before_install:
   conda create -q -n test-environment python=$CONDA
   source activate test-environment
 install:
-- |
-  if [ -n "$PYTHON" ]; then
-    python setup.py sdist
-    pip install --verbose dist/*.tar.gz
-  elif [ -n "$CONDA" ]; then
-    conda build conda.recipe
-  fi
+- conda build conda.recipe
