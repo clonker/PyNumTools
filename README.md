@@ -1,0 +1,1 @@
+Does it wörk?  [![Build Status](https://travis-ci.org/clonker/PyNumTools.svg?branch=master)](https://travis-ci.org/clonker/PyNumTools)

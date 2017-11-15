@@ -23,6 +23,7 @@ requirements:
   run:
     - python
     - scipy
+    - numpy
     - vs2015_runtime  # [win]
 
 test:

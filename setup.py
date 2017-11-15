@@ -75,5 +75,5 @@ setup(
     ext_modules=ext_modules,
     packages=find_packages(),
     zip_safe=False,
-    install_requires=['numpy', 'scipy']
+    install_requires=['numpy']
 )
