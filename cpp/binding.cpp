@@ -19,7 +19,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(pynumtools_binding, m) {
     using namespace py::literals;
 
-    m.def("lgmres", &pnt::lgmres,
+    m.def("lgmres", &pnt::lgmres::sparse::compute,
           "A"_a,
           "b"_a,
           "x0"_a = pnt::Vec(0),
@@ -29,7 +29,8 @@ PYBIND11_MODULE(pynumtools_binding, m) {
           "inner_m"_a = 30,
           "outer_k"_a = 3,
           "outer_v"_a = std::vector<std::tuple<pnt::Vec, pnt::Vec>>(),
-          "store_outer_Av"_a = true);
+          "store_outer_Av"_a = true,
+          "prepend_outer_Av"_a = false);
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;

@@ -33,15 +33,45 @@
 #define PYNUMTOOLS_LGMRES_H
 
 #include "util.h"
+#include <Eigen/QR>
+
 namespace pnt {
 
-SpVec spLgmres(Eigen::Ref<SpMatrix> A, Eigen::Ref<SpVec> b, Eigen::Ref<SpVec> x0, double tol, std::size_t maxiter,
-               Eigen::Ref<SpMatrix> M, std::size_t inner_m, std::size_t outer_k,
-               std::vector<std::tuple<Vec, Vec>> &outer_v, bool storeOuterAv);
+namespace lgmres {
 
-Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::size_t maxiter,
+template<typename VecType>
+struct ArnoldiResult {
+    // QR
+    Matrix Q;
+    Matrix R;
+    Eigen::HouseholderQR<Matrix> QR;
+    // orthogonal projection  coefficients
+    Matrix B;
+    // columns of matrix V
+    std::vector<VecType> vs;
+    // columns of matrix Z
+    std::vector<VecType> zs;
+    // solution to || Hy - e_1||_2 = min!
+    VecType y;
+};
+
+
+namespace sparse {
+
+ArnoldiResult<SpVec> arnoldi(const system::MatVec<SpVec> &matvec, const SpVec &v0, std::size_t m,
+                             double atol, const system::MatVec<SpVec> &rpsolve,
+                             std::vector<std::tuple<Vec, Vec>> &outer_v, bool prependOuterV);
+
+Vec compute(const SpMatrix &A, Eigen::Ref<Vec> b, Eigen::Ref<Vec> x0, double tol, std::size_t maxiter,
+            const SpMatrix &M, std::size_t inner_m, std::size_t outer_k,
+            std::vector<std::tuple<Vec, Vec>> &outer_v, bool storeOuterAv, bool prependOuterAv);
+
+}
+}
+
+/*Vec lgmres(Eigen::Ref<Matrix> A, Eigen::Ref<Vec> b, Vec x0, double tol, std::size_t maxiter,
            Matrix M, std::size_t inner_m, std::size_t outer_k, std::vector<std::tuple<Vec, Vec>> &outer_v,
-           bool storeOuterAv);
+           bool storeOuterAv);*/
 
 }
 

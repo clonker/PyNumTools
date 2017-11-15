@@ -13,13 +13,26 @@ using Matrix = Eigen::MatrixXd;
 using Vec = Eigen::VectorXd;
 
 using SpMatrix = Eigen::SparseMatrix<double>;
-using SpVec = Eigen::SparseMatrix<double>;
+using SpVec = Eigen::VectorXd; //Eigen::SparseMatrix<double>;
+
+namespace system {
+
+/**
+ * linear operator
+ */
+template<typename VecType>
+using MatVec = std::function<VecType(const VecType&)>;
+
+using DenseMatVec = MatVec<Vec>;
+using SparseMatVec = MatVec<SpVec>;
+
+}
 
 template<typename Mat, typename Vec>
 class System {
 public:
 
-    System(Eigen::Ref<Mat> A, Eigen::Ref<Mat> M, Eigen::Ref<Vec> x0, Eigen::Ref<Vec> b) : _A(A), _M(M), _x0(x0), _b(b) {
+    System(const Mat &A, const Mat &M, Eigen::Ref<Vec> x0, Eigen::Ref<Vec> b) : _A(A), _M(M), _x0(x0), _b(b) {
         if(_M.rows() == 0 && _M.cols() == 0) {
             _M.conservativeResize(_A.rows(), _A.cols());
             _M.setIdentity();
