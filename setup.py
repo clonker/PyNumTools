@@ -38,7 +38,7 @@ ext_modules = [
         include_dirs=[
             get_pybind_include(), get_project_include(), get_numpy_include(), get_spdlog_include(), get_eigen_include()
         ],
-        extra_compile_args=['-std=c++14', '-O0', '-fvisibility=hidden']
+        extra_compile_args=['-std=c++14', '-O3', '-fvisibility=hidden']
         # -ffast-math
     ),
 ]
