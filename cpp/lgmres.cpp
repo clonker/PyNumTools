@@ -178,17 +178,15 @@ ArnoldiResult<SpVec> arnoldi(const system::MatVec<SpVec> &matvec, const SpVec &v
     return result;
 }
 
-SpVec compute(const SpMatrix &A, Eigen::Ref<SpVec> b, Eigen::Ref<SpVec> x0, double tol, std::size_t maxiter,
-              const SpMatrix &M, std::size_t inner_m, std::size_t outer_k,
+SpVec compute(const LinearOperator &A, Eigen::Ref<SpVec> b, Eigen::Ref<SpVec> x0, double tol, std::size_t maxiter,
+              const LinearOperator &M, std::size_t inner_m, std::size_t outer_k,
               std::vector<std::tuple<Vec, Vec>> &outer_v, bool storeOuterAv, bool prependOuterAv) {
     auto log = spdlog::stdout_color_mt("console");
     log->set_level(spdlog::level::debug);
 
     SparseSystem system(A, M, x0, b);
 
-    // auto N = A.rows();
-
-    auto matvec = [&system](const SpVec &vec) {
+    auto matvec = [&system, log](const SpVec &vec) {
         return system.call(vec);
     };
     auto psolve = [&system](const SpVec &vec) {

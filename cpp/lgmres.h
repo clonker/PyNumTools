@@ -62,9 +62,10 @@ ArnoldiResult<SpVec> arnoldi(const system::MatVec<SpVec> &matvec, const SpVec &v
                              double atol, const system::MatVec<SpVec> &rpsolve,
                              std::vector<std::tuple<Vec, Vec>> &outer_v, bool prependOuterV);
 
-Vec compute(const SpMatrix &A, Eigen::Ref<Vec> b, Eigen::Ref<Vec> x0, double tol, std::size_t maxiter,
-            const SpMatrix &M, std::size_t inner_m, std::size_t outer_k,
+Vec compute(const LinearOperator &A, Eigen::Ref<Vec> b, Eigen::Ref<Vec> x0, double tol, std::size_t maxiter,
+            const LinearOperator &M, std::size_t inner_m, std::size_t outer_k,
             std::vector<std::tuple<Vec, Vec>> &outer_v, bool storeOuterAv, bool prependOuterAv);
+
 
 }
 }
