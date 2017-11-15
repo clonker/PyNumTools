@@ -19,6 +19,8 @@ requirements:
     - setuptools
     - numpy
     - cmake
+    - blas
+    - lapack
 
   run:
     - python

@@ -57,6 +57,8 @@ class BuildExt(build_ext):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct, [])
         opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
+        opts.append('-DEIGEN_USE_BLAS')
+        opts.append('-DEIGEN_USE_LAPACKE')
         for ext in self.extensions:
             ext.extra_compile_args = opts
         build_ext.build_extensions(self)
