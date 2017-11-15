@@ -35,4 +35,4 @@ install:
     conda build conda.recipe
   fi
 script:
-- python tests/test.py
+- python pynumtools/test/test_lgmres.py
