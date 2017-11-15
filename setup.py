@@ -38,7 +38,7 @@ ext_modules = [
         include_dirs=[
             get_pybind_include(), get_project_include(), get_numpy_include(), get_spdlog_include(), get_eigen_include()
         ],
-        extra_compile_args=['-std=c++14', '-O0', '-fvisibility=hidden']
+        extra_compile_args=['-std=c++14', '-O3', '-fvisibility=hidden']
     ),
 ]
 
@@ -55,9 +55,6 @@ class BuildExt(build_ext):
     def build_extensions(self):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct, [])
-        opts.append('-fvisibility=hidden')
-        opts.append('-std=c++14')
-        opts.append('-O3')
         opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
         for ext in self.extensions:
             ext.extra_compile_args = opts
