@@ -13,6 +13,8 @@ addons:
       - gcc-7
       - g++-7
       - cmake
+cache:
+  apt: true
 before_install:
 - |
   if [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX=g++-7 CC=gcc-7; fi
@@ -28,3 +30,7 @@ before_install:
   source activate test-environment
 install:
 - conda build -c conda-forge conda.recipe
+script:
+- echo "done"
+notifications:
+  email: false
