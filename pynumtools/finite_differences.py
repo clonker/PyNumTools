@@ -51,6 +51,36 @@ def fd_coefficients(x_bar, xs, k=1):
     return c
 
 
+def get_fd_matrix_midpoints(xs, k=1, window_width=2):
+    """
+
+    :param xs:
+    :param k:
+    :param window_width:
+    :return:
+    """
+    n_nodes = len(xs)
+    indices = _np.arange(0, n_nodes, step=1, dtype=int)
+    entries_per_row = 2 * window_width + 1
+    data = _np.empty(shape=(entries_per_row * (n_nodes-1),), dtype=xs.dtype)
+    row_data = _np.empty_like(data)
+    col_data = _np.empty_like(data)
+
+    offset = 0
+    for row, window in enumerate(_sliding_window(indices, width=window_width, fixed_width=True)):
+        window_grid = xs[window]
+        window_slice = slice(offset, offset + len(window))
+        data[window_slice] = fd_coefficients(.5*(xs[row]+xs[row+1]), window_grid, k=k)
+        row_data[window_slice] = row
+        col_data[window_slice] = window
+
+        offset += len(window)
+        if row == n_nodes-2:
+            break
+
+    return _sparse.csc_matrix((data, (row_data, col_data)), shape=(n_nodes-1, n_nodes))
+
+
 def get_fd_matrix(xs, k=1, window_width=2):
     """
     Yields a sparse csc matrix D of size (n_nodes)x(n_nodes), such that

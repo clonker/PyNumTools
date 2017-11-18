@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from pynumtools.finite_differences import fd_coefficients, get_fd_matrix
+from pynumtools.finite_differences import fd_coefficients, get_fd_matrix, get_fd_matrix_midpoints
 from pynumtools.util import sliding_window
 
 
@@ -91,6 +91,39 @@ class TestFiniteDifferences(unittest.TestCase):
 
         ax4.set_title('fourth derivative')
         ax4.plot(x0, get_fd_matrix(x0, k=4, window_width=4)*fun, 'o')
+        ax4.plot(x0, np.sin(x0))
+
+        plt.show()
+
+    def test_differentiation_matrix_midpoint(self):
+        x0 = np.arange(0, 2.0 * np.pi, 0.05)
+        xx = []
+        for x in x0:
+            if np.random.random() < .3:
+                xx.append(x)
+        x0 = np.array(xx)
+        fun = np.sin(x0)
+
+        midpoints = .5*(x0[1:] + x0[:-1])
+        midvals = .5*(fun[1:] + fun[:-1])
+
+
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(nrows=2, ncols=2)
+
+        ax1.set_title('first derivative')
+        ax1.plot(midpoints, get_fd_matrix_midpoints(x0, k=1, window_width=2) * fun, 'o')
+        ax1.plot(x0, np.cos(x0))
+
+        ax2.set_title('second derivative')
+        ax2.plot(midpoints, get_fd_matrix_midpoints(x0, k=2, window_width=2) * fun, 'o')
+        ax2.plot(x0, -np.sin(x0))
+
+        ax3.set_title('third derivative')
+        ax3.plot(midpoints, get_fd_matrix_midpoints(x0, k=3, window_width=2) * fun, 'o')
+        ax3.plot(x0, -np.cos(x0))
+
+        ax4.set_title('fourth derivative')
+        ax4.plot(midpoints, get_fd_matrix_midpoints(x0, k=4, window_width=4) * fun, 'o')
         ax4.plot(x0, np.sin(x0))
 
         plt.show()
