@@ -2,15 +2,14 @@ language: cpp
 dist: trusty
 sudo: require
 osx_image: xcode8.1
-compiler:
-- gcc
-- clang
 matrix:
   include:
   - os: linux
     env: CONDA=3.6
+    compiler: gcc
   - os: osx
     env: CONDA=3.6
+    compiler: clang
 addons:
   apt:
     sources:
