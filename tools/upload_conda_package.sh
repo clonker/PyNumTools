@@ -27,4 +27,4 @@ CONDA_PACKAGE_FILE=$(conda build conda.recipe --output)
 echo "found conda package file $CONDA_PACKAGE_FILE"
 
 conda install anaconda-client -qy
-anaconda -t $BINSTAR_TOKEN upload -c clonker -u clonker --force $CONDA_PACKAGE_FILE
+anaconda -t $BINSTAR_TOKEN upload -u clonker --force $CONDA_PACKAGE_FILE
