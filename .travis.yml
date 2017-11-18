@@ -1,9 +1,15 @@
 language: cpp
 dist: trusty
 sudo: require
+osx_image: xcode8.1
+compiler:
+- gcc
+- clang
 matrix:
   include:
   - os: linux
+    env: CONDA=3.6
+  - os: osx
     env: CONDA=3.6
 addons:
   apt:
@@ -30,6 +36,8 @@ before_install:
   source activate test-environment
 install:
 - conda build -c conda-forge conda.recipe
+- chmod +x tools/upload_conda_package.sh
+- tools/upload_conda_package.sh
 script:
 - echo "done"
 notifications:
