@@ -13,6 +13,7 @@ set(eigen_include_dir "${CMAKE_CURRENT_SOURCE_DIR}/lib/eigen")
 
 set(sources ${CMAKE_CURRENT_SOURCE_DIR}/cpp/binding.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/lgmres.h ${CMAKE_CURRENT_SOURCE_DIR}/cpp/lgmres.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/util.h)
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/util.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/quadrature.h ${CMAKE_CURRENT_SOURCE_DIR}/cpp/quadrature.cpp)
 
 add_subdirectory(pynumtools)
