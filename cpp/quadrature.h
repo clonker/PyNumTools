@@ -15,6 +15,16 @@ namespace quad {
 
 using array_type = py::array_t<double, py::array::c_style>;
 
+template<unsigned int N>
+struct QuadratureCoefficients {
+    double nominator;
+    double denominator;
+    std::array<double, N> weights;
+};
+
+template<unsigned int N>
+QuadratureCoefficients<N> weights();
+
 double newton_cotes(const array_type &y, double dx, std::size_t n=1, long axis = -1);
 
 }
