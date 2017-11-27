@@ -2,6 +2,7 @@
 
 import unittest
 import numpy as np
+import time
 
 import pynumtools.kmc as kmc
 
@@ -74,14 +75,20 @@ class TestKineticMonteCarlo(unittest.TestCase):
 
     def test_conservation_of_particles_after_converting(self):
         system = example_system_conversions()
+        t1 = time.perf_counter()
         time_series, times = system.convert_events_to_time_series(0.0001)
+        t2 = time.perf_counter()
+        print("convert time series py ", t2 - t1, "s")
         n_particles = np.sum(time_series[0])
         all_correct = np.fromiter(map(lambda state: np.sum(state) == n_particles, time_series), dtype=np.bool)
         self.assertTrue(np.all(all_correct))
 
     def test_conservation_of_particles_after_converting2(self):
         system = example_system_conversions()
+        t1 = time.perf_counter()
         time_series, times = system.convert_events_to_time_series2(0.0001)
+        t2 = time.perf_counter()
+        print("convert time series cpp ", t2 - t1, "s")
         n_particles = np.sum(time_series[0])
         all_correct = np.fromiter(map(lambda state: np.sum(state) == n_particles, time_series), dtype=np.bool)
         self.assertTrue(np.all(all_correct))
