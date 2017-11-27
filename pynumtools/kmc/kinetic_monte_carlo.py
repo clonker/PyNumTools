@@ -16,7 +16,7 @@ import math
 import numpy as np
 
 from pynumtools.kmc.logutil import StyleAdapter
-# from readdy_learn.analyze_tools.tools import convert_kmc
+from pynumtools.kmc.kmc_binding import convert_kmc
 
 __license__ = "LGPL"
 __authors__ = ["chrisfroe", "clonker"]
@@ -350,7 +350,7 @@ class ReactionDiffusionSystem:
         """
         np.random.seed()
 
-        log.debug("Simulate for {} steps", n_steps)
+        log.info("Simulate for {} steps", n_steps)
         self._n_reactions = len(self._reactions)
         self._is_finalized = True
 
@@ -407,7 +407,7 @@ class ReactionDiffusionSystem:
             event.perform(self._state)
             self._state_list.append(np.copy(self._state))
             if event.interruptive:
-                log.debug("system interrupted after event {}, state is now {}", event, self._state)
+                log.info("system interrupted after event {}, state is now {}", event, self._state)
                 return self._time, event
         return None
 
