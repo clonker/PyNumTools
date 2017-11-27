@@ -6,6 +6,8 @@ platform:
 environment:
   matrix:
   - CONDA: 36
+  binstar_token:
+    secure: B8Wzum81kOTpEddDZHTpQIA5j8G4XLSNjaWvGyZylvuoG7XFe6AyB9EUwODK+Ru/
 install:
 - ps: |
     git submodule update -q --init --recursive
@@ -22,3 +24,10 @@ build_script:
     conda install --use-local pynumtools
 test_script:
 - ps: python -c "import pynumtools"
+
+on_success:
+- ps: |
+    $env:CONDA_PACKAGE_FILE = $(conda build conda.recipe --output)
+    echo "found conda package file $env:CONDA_PACKAGE_FILE"
+    conda install anaconda-client -qy
+    anaconda -t $env:binstar_token upload -u clonker --force $env:CONDA_PACKAGE_FILE
