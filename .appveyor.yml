@@ -21,7 +21,9 @@ install:
 build_script:
 - ps: |
     conda build conda.recipe
+    if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
     conda install --use-local pynumtools
+    if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
 test_script:
 - ps: python -c "import pynumtools"
 
@@ -30,5 +32,5 @@ on_success:
     $env:CONDA_PACKAGE_FILE = $(conda build conda.recipe --output) 2> out-null
     echo "found conda package file $env:CONDA_PACKAGE_FILE"
     conda install anaconda-client -qy
-    anaconda -t $env:binstar_token upload -u clonker --force $env:CONDA_PACKAGE_FILE
+- ps: anaconda -t $env:binstar_token upload -u clonker --force $env:CONDA_PACKAGE_FILE 2> out-null
 - ps: echo "done"
