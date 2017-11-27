@@ -5,11 +5,14 @@
 #ifndef PYNUMTOOLS_UTIL_H
 #define PYNUMTOOLS_UTIL_H
 
-#if defined(_WIN64) or defined(_WIN32)
+#if defined(_WIN64) || defined(_WIN32)
+
 #include <complex>
+
 #define lapack_complex_float std::complex<float>
 #define lapack_complex_double std::complex<double>
-#endif
+
+#endif // defined(_WIN64) || defined(_WIN32)
 
 #include <Eigen/SparseCore>
 #include <utility>
