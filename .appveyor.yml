@@ -32,5 +32,5 @@ on_success:
     $env:CONDA_PACKAGE_FILE = $(conda build conda.recipe --output) 2> out-null
     echo "found conda package file $env:CONDA_PACKAGE_FILE"
     conda install anaconda-client -qy
-- ps: anaconda -t $env:binstar_token upload -u clonker --force $env:CONDA_PACKAGE_FILE 2> out-null
+- cmd: anaconda -t $binstar_token upload -u clonker --force $CONDA_PACKAGE_FILE
 - ps: echo "done"
