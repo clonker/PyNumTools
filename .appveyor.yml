@@ -19,5 +19,6 @@ install:
 build_script:
 - ps: |
     conda build conda.recipe
+    conda install --use-local pynumtools
 test_script:
-- ps: python tests\test.py
+- ps: python -c "import pynumtools"
