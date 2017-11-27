@@ -5,7 +5,6 @@ platform:
 - x64
 environment:
   matrix:
-  - PYTHON: 36
   - CONDA: 36
 install:
 - ps: |
