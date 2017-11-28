@@ -27,10 +27,14 @@ build_script:
 test_script:
 - ps: python -c "import pynumtools"
 
+branches:
+  only:
+    - master
+
 on_success:
 - ps: |
     $env:CONDA_PACKAGE_FILE = $(conda build conda.recipe --output) 2> out-null
     echo "found conda package file $env:CONDA_PACKAGE_FILE"
-    conda install anaconda-client -qy
-- cmd: anaconda -t %binstar_token% upload -u clonker --force %CONDA_PACKAGE_FILE%
+    if ($env:APPVEYOR_REPO_TAG -eq "true") { conda install anaconda-client -qy }
+- cmd: IF "%APPVEYOR_REPO_TAG%" == "true" (anaconda -t %binstar_token% upload -u clonker --force %CONDA_PACKAGE_FILE%)
 - ps: echo "done"
