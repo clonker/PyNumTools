@@ -16,7 +16,7 @@ import math
 import numpy as np
 
 from pynumtools.kmc.logutil import StyleAdapter
-from pynumtools.kmc.kmc_binding import convert_kmc
+from pynumtools.kmc_binding import convert_kmc
 
 __license__ = "LGPL"
 __authors__ = ["chrisfroe", "clonker"]

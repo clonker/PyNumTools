@@ -17,3 +17,7 @@ set(sources ${CMAKE_CURRENT_SOURCE_DIR}/cpp/binding.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/quadrature.h ${CMAKE_CURRENT_SOURCE_DIR}/cpp/quadrature.cpp)
 
 add_subdirectory(pynumtools)
+
+set(kmc_sources ${CMAKE_CURRENT_SOURCE_DIR}/cpp/kmc/kmc_binding.cpp)
+
+add_subdirectory(pynumtools/kmc)
