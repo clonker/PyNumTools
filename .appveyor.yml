@@ -21,11 +21,9 @@ install:
 build_script:
 - ps: |
     conda build conda.recipe
-    if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
+    if ($LastExitCode -ne 0) { throw 1  }
     conda install --use-local pynumtools
-    if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode)  }
-test_script:
-- ps: python -c "import pynumtools"
+    if ($LastExitCode -ne 0) { throw 1  }
 
 branches:
   only:
