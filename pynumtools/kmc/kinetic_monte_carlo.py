@@ -16,7 +16,7 @@ import math
 import numpy as np
 
 from pynumtools.kmc.logutil import StyleAdapter
-from pynumtools.kmc_binding import convert_kmc
+from pynumtools.pynumtools_binding.kmc import convert_to_timeseries
 
 __license__ = "LGPL"
 __authors__ = ["chrisfroe", "clonker"]
@@ -438,7 +438,7 @@ class ReactionDiffusionSystem:
 
         times_list = np.array(self._time_list, dtype=np.float64)
         state_list = np.array(self._state_list, dtype=np.uint32)
-        convert_kmc(result, times, times_list, state_list)
+        convert_to_timeseries(result, times, times_list, state_list)
 
         # state = 0
         # nstates = len(self._state_list)

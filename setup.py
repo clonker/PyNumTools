@@ -61,8 +61,8 @@ class CMakeBuild(build_ext):
 setup(
     name='PyNumTools',
     version=__version__,
-    author='Moritz Hoffmann',
-    author_email='clonker at gmail.com',
+    author='Moritz Hoffmann, Christoph Fröhner',
+    author_email='clonker at gmail.com, christoph.froehner at fu-berlin.de',
     url='https://github.com/clonker/PyNumTools',
     description='estimator skeleton',
     long_description='yes',

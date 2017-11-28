@@ -32,6 +32,9 @@ test:
   imports:
     - pynumtools
 
+  requires:
+    - nose
+
 about:
   summary: Pynumtools
   license_file: LICENSE

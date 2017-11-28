@@ -1,22 +1,17 @@
 /**
- * @file kmc_binding.cpp
- * @brief Python bindings for functions used in Kinetic Monte Carlo algorithm
+ * @file kmc.cpp
+ * @brief Functions used in Kinetic Monte Carlo algorithm
  * @author chrisfroe
- * @date 27.11.17
+ * @date 28.11.17
  * @copyright GNU Lesser General Public License v3.0
  */
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <pybind11/numpy.h>
+#include "kmc.h"
 
-namespace py = pybind11;
+namespace kmc {
 
-using kmc_result_array = py::array_t<std::uint32_t, py::array::c_style>;
-using kmc_state_array = py::array_t<std::uint32_t, py::array::c_style>;
-using kmc_times_array = py::array_t<double, py::array::c_style>;
-
-static void convert_kmc(kmc_result_array &result, const kmc_times_array &times, const kmc_times_array &times_list, const kmc_state_array &state_list) {
+void convert_to_timeseries(kmc_result_array &result, const kmc_times_array &times,
+                                  const kmc_times_array &times_list, const kmc_state_array &state_list) {
     std::size_t state = 0;
 
     auto nstates = (std::size_t) state_list.shape()[0];
@@ -44,15 +39,5 @@ static void convert_kmc(kmc_result_array &result, const kmc_times_array &times, 
         }
     }
 }
-
-PYBIND11_MODULE(kmc_binding, m) {
-    using namespace py::literals;
-    m.def("convert_kmc", &convert_kmc);
-
-#ifdef VERSION_INFO
-    m.attr("__version__") = VERSION_INFO;
-#else
-    m.attr("__version__") = "dev";
-#endif
 
 }
