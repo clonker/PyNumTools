@@ -14,6 +14,7 @@
 #include <pybind11/stl.h>
 
 #include "lgmres.h"
+#include "kmc.h"
 
 namespace py = pybind11;
 
@@ -53,6 +54,9 @@ PYBIND11_MODULE(pynumtools_binding, m) {
            }
        }, inner_m, outer_k, outer_v, storeOuterAv, prependOuterAv);
     });
+
+    py::module kmc = m.def_submodule("kmc", "C++ functions for Kinetic Monte Carlo algorithm");
+    kmc.def("convert_to_timeseries", &kmc::convert_to_timeseries);
 
 #ifdef VERSION_INFO
     m.attr("__version__") = VERSION_INFO;
