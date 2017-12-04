@@ -119,6 +119,16 @@ class TestKineticMonteCarlo(unittest.TestCase):
         # A or B (or both ) have a delta of 1 in box 0
         self.assertTrue(a_difference == 1 or b_difference == 1)
 
+    def test_educt_is_product(self):
+        system = kmc.ReactionDiffusionSystem([[[0.]],[[0.]]], 2, 1, [[1, 0]], species_names=["DA", "A"])
+        system.add_fission("DA", "DA", "A", np.array([0.1]))
+        system.simulate(20)
+        counts, times = system.convert_events_to_time_series2(0.001)
+        self.assertEqual(counts[0,0,0], 1, msg="initial state DA(0) = 1")
+        self.assertEqual(counts[0,0,1], 0, msg="initial state A(0) = 0")
+        self.assertEqual(counts[-1,0,0], 1, msg="final state DA(-1) = 1, DA is conserved")
+        self.assertEqual(counts[-1,0,1], 20, msg="final state A(-1) = 20, due to 20 events sampled")
+
 
 if __name__ == '__main__':
     unittest.main()

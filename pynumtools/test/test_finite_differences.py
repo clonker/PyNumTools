@@ -7,7 +7,7 @@ from pynumtools.util import sliding_window
 
 class TestFiniteDifferences(unittest.TestCase):
     def test_first_derivative(self):
-        x0 = np.arange(0, 2.0 * np.pi, 0.05)
+        x0 = np.arange(0, 2.0 * np.pi, 0.01)
         xx = []
         for x in x0:
             if np.random.random() < .3:
@@ -28,7 +28,7 @@ class TestFiniteDifferences(unittest.TestCase):
         np.testing.assert_almost_equal(deriv, true_deriv, 6)
 
     def test_second_derivative(self):
-        x0 = np.arange(0, 2.0 * np.pi, 0.05)
+        x0 = np.arange(0, 2.0 * np.pi, 0.01)
         xx = []
         for x in x0:
             if np.random.random() < .3:

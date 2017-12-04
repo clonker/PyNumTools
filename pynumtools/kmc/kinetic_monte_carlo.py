@@ -93,8 +93,8 @@ class Conversion(Reaction):
         super(Conversion, self).__init__(rate, n_species, n_boxes, species_names)
         self.species_from = species_from
         self.species_to = species_to
-        self.stoichiometric_delta[self.species_from] = -1
-        self.stoichiometric_delta[self.species_to] = +1
+        self.stoichiometric_delta[self.species_from] -= 1
+        self.stoichiometric_delta[self.species_to] += 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx] * box_state[self.species_from]
@@ -114,9 +114,9 @@ class Fusion(Reaction):
         self.species_from1 = species_from1
         self.species_from2 = species_from2
         self.species_to = species_to
-        self.stoichiometric_delta[self.species_from1] = -1
-        self.stoichiometric_delta[self.species_from2] = -1
-        self.stoichiometric_delta[self.species_to] = +1
+        self.stoichiometric_delta[self.species_from1] -= 1
+        self.stoichiometric_delta[self.species_from2] -= 1
+        self.stoichiometric_delta[self.species_to] += 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx] * box_state[self.species_from1] * box_state[self.species_from2]
@@ -138,9 +138,9 @@ class Fission(Reaction):
         self.species_from = species_from
         self.species_to1 = species_to1
         self.species_to2 = species_to2
-        self.stoichiometric_delta[self.species_from] = -1
-        self.stoichiometric_delta[self.species_to1] = +1
-        self.stoichiometric_delta[self.species_to2] = +1
+        self.stoichiometric_delta[self.species_from] -= 1
+        self.stoichiometric_delta[self.species_to1] += 1
+        self.stoichiometric_delta[self.species_to2] += 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx] * box_state[self.species_from]
@@ -160,7 +160,7 @@ class Decay(Reaction):
     def __init__(self, species_from, rate, n_species, n_boxes, species_names):
         super(Decay, self).__init__(rate, n_species, n_boxes, species_names)
         self.species_from = species_from
-        self.stoichiometric_delta[self.species_from] = -1
+        self.stoichiometric_delta[self.species_from] -= 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx] * box_state[self.species_from]
@@ -178,7 +178,7 @@ class Creation(Reaction):
     def __init__(self, species_to, rate, n_species, n_boxes, species_names):
         super(Creation, self).__init__(rate, n_species, n_boxes, species_names)
         self.species_to = species_to
-        self.stoichiometric_delta[self.species_to] = +1
+        self.stoichiometric_delta[self.species_to] += 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx]
