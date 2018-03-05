@@ -341,20 +341,24 @@ class ReactionDiffusionSystem:
     def diffusivity(self):
         return copy.deepcopy(self._diffusivity)
 
-    def simulate(self, n_steps, interruptive_reaction=lambda i, r: False, interruptive_diff=lambda s, i, j: False):
+    def simulate(self, n_steps=None, target_time=None, interruptive_reaction=lambda i, r: False, interruptive_diff=lambda s, i, j: False):
         """
         Simulate up to n_steps events.
 
         If an interruptive event is performed, the simulation will stop beforehand
         and the current time will be returned. If successfully doing all steps, return None.
         """
+        assert (n_steps is not None) ^ (target_time is not None)
         np.random.seed()
 
         log.info("Simulate for {} steps", n_steps)
         self._n_reactions = len(self._reactions)
         self._is_finalized = True
 
-        for t in range(n_steps):
+        t = 0
+
+        interrupt = False
+        while not interrupt:
             log.debug("Step {}, system {}", t, self)
             possible_events = []
             cumulative = 0.
@@ -409,6 +413,13 @@ class ReactionDiffusionSystem:
             if event.interruptive:
                 log.info("system interrupted after event {}, state is now {}", event, self._state)
                 return self._time, event
+
+            t += 1
+
+            if target_time is not None:
+                interrupt = self._time >= target_time
+            else:
+                interrupt = t >= n_steps
         return None
 
     def rollback(self, target_time):

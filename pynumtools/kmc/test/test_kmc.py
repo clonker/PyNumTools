@@ -21,7 +21,7 @@ def example_system_conversions():
     system = kmc.ReactionDiffusionSystem(diffusivity, n_species, n_boxes, init_state, species_names=species_names)
     system.add_conversion("A", "B", np.array([4., 4.]))
     system.add_conversion("B", "A", np.array([0.5, 0.5]))
-    system.simulate(50)
+    system.simulate(n_steps=50)
     return system
 
 
@@ -111,7 +111,7 @@ class TestKineticMonteCarlo(unittest.TestCase):
         init_state = np.copy(system._state)
         # interrupt after any reaction in box 0 or any diffusion from or to box 0
         # i.e. population in box 0 does change exactly once
-        res = system.simulate(100, lambda i, r: i == 0, lambda s, i, j: i == 0 or j == 0)
+        res = system.simulate(n_steps=100, interruptive_reaction=lambda i, r: i == 0, interruptive_diff=lambda s, i, j: i == 0 or j == 0)
         state = np.copy(system._state)
         self.assertTrue(res is not None)
         a_difference = abs(state[0][0] - init_state[0][0])
