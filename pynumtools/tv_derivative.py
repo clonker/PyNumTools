@@ -115,7 +115,7 @@ if __name__ == '__main__':
     x0 = _np.arange(0, 2.0 * _np.pi, 0.005)
     testf = _np.array([_np.sin(x) for x in x0])
     testf = testf + _np.random.normal(0.0, _np.sqrt(noise_variance), x0.shape)
-    true_deriv = [np.cos(x) for x in x0]
+    true_deriv = [_np.cos(x) for x in x0]
 
     tv_deriv0 = tv_derivative(testf, x0, alpha=.001, maxit=20, linalg_solver_maxit=5e6,
                               verbose=True, solver='spsolve', tol=1e-12)
@@ -134,3 +134,6 @@ if __name__ == '__main__':
     plt.plot(x0, tv_deriv_back, label='tv, alpha=.01')
     plt.plot(x0, tv_deriv2_back, label='tv, alpha=.5')
     plt.plot(x0, tv_deriv0_back, label='tv, alpha=.001')
+
+    plt.legend()
+    plt.show()
