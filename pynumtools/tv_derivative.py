@@ -113,26 +113,32 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     noise_variance = .08 * .08
     x0 = _np.arange(0, 2.0 * _np.pi, 0.005)
-    testf = _np.array([_np.sin(x) for x in x0])
+    line = _np.linspace(-1., 1., num=len(x0))
+
+    #testf = _np.array([_np.sin(x) for x in x0])
+    #testf = _np.array([0 if i < (len(x0)//2) else 1 for i in range(len(x0))])
+    testf = _np.abs(line)
     testf = testf + _np.random.normal(0.0, _np.sqrt(noise_variance), x0.shape)
+    fd = _np.gradient(testf)
     true_deriv = [_np.cos(x) for x in x0]
 
-    tv_deriv0 = tv_derivative(testf, x0, alpha=.001, maxit=20, linalg_solver_maxit=5e6,
-                              verbose=True, solver='spsolve', tol=1e-12)
+    tv_deriv0 = tv_derivative(testf, x0, alpha=.001, maxit=50, linalg_solver_maxit=5e6,
+                              verbose=True, solver='np', tol=1e-12)
     tv_deriv0_back = .5 * (tv_deriv0[1:] + tv_deriv0[:-1])
-    tv_deriv = tv_derivative(testf, x0, alpha=.01, maxit=20, linalg_solver_maxit=5e6,
-                              verbose=True, solver='spsolve', tol=1e-12)
-    tv_deriv_back = .5 * (tv_deriv[1:] + tv_deriv[:-1])
-    tv_deriv2 = tv_derivative(testf, x0, alpha=.5, maxit=20, linalg_solver_maxit=5e6,
-                              verbose=True, solver='spsolve', tol=1e-12)
-    tv_deriv2_back = .5 * (tv_deriv2[1:] + tv_deriv2[:-1])
+    #tv_deriv = tv_derivative(testf, x0, alpha=.01, maxit=20, linalg_solver_maxit=5e6,
+    #                          verbose=True, solver='spsolve', tol=1e-12)
+    #tv_deriv_back = .5 * (tv_deriv[1:] + tv_deriv[:-1])
+    #tv_deriv2 = tv_derivative(testf, x0, alpha=.5, maxit=20, linalg_solver_maxit=5e6,
+    #                          verbose=True, solver='spsolve', tol=1e-12)
+    #tv_deriv2_back = .5 * (tv_deriv2[1:] + tv_deriv2[:-1])
 
     plt.figure(figsize=(15, 15))
     plt.plot(x0, testf, label='f')
     plt.plot(x0, true_deriv, label='df')
+    plt.plot(x0, fd, label='fd')
 
-    plt.plot(x0, tv_deriv_back, label='tv, alpha=.01')
-    plt.plot(x0, tv_deriv2_back, label='tv, alpha=.5')
+    #plt.plot(x0, tv_deriv_back, label='tv, alpha=.01')
+    #plt.plot(x0, tv_deriv2_back, label='tv, alpha=.5')
     plt.plot(x0, tv_deriv0_back, label='tv, alpha=.001')
 
     plt.legend()
