@@ -117,14 +117,15 @@ class Fusion(Reaction):
         self.species_to = species_to
         self.stoichiometric_delta[self.species_from1] -= 1
         self.stoichiometric_delta[self.species_from2] -= 1
-        self.stoichiometric_delta[self.species_to] += 1
+        if self.species_to is not None:
+            self.stoichiometric_delta[self.species_to] += 1
 
     def propensity(self, box_state, box_idx):
         return self.rate[box_idx] * box_state[self.species_from1] * box_state[self.species_from2]
 
     def __str__(self):
         return "{} + {} -> {}".format(self.species_names[self.species_from1], self.species_names[self.species_from2],
-                                      self.species_names[self.species_to])
+                                      self.species_names[self.species_to] if self.species_to is not None else "0")
 
     def __repr__(self):
         string = "kmc.Fusion"
@@ -330,7 +331,7 @@ class ReactionDiffusionSystem:
             raise RuntimeError("System has already been finalized")
 
     def _id_from_name(self, type_name):
-        return self._names_to_ids[type_name]
+        return self._names_to_ids[type_name] if type_name is not None else None
 
     def add_conversion(self, species_from, species_to, rate):
         self._assure_not_finalized()
