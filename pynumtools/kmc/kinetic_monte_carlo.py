@@ -212,13 +212,40 @@ class Fission2To3(Reaction):
 
     def __str__(self) -> str:
         return f"{self.species_names[self.species_from[0]]} + {self.species_names[self.species_from[1]]} -> " \
-               f"{self.species_names[self.species_to[0]]} + {self.species_names[self.species_to[1]]} " \
-               f"+ {self.species_names[self.species_to[2]]}"
+            f"{self.species_names[self.species_to[0]]} + {self.species_names[self.species_to[1]]} " \
+            f"+ {self.species_names[self.species_to[2]]}"
 
     def __repr__(self):
         string = "kmc.Fission2To3"
         string += "(from " + str(self.species_from) + ", to " + str(self.species_to) + ", rate " + str(self.rate) + ")"
         return string
+
+
+class DoubleConversion(Reaction):
+
+    def __init__(self, species_from, species_to, rate, n_species, n_boxes, species_names):
+        super().__init__(rate, n_species, n_boxes, species_names)
+        assert isinstance(species_from, (list, tuple)) and len(species_from) == 2
+        assert isinstance(species_to, (list, tuple)) and len(species_to) == 2
+        self.species_from = species_from
+        self.species_to = species_to
+        for s in self.species_from:
+            self.stoichiometric_delta[s] -= 1
+        for s in self.species_to:
+            self.stoichiometric_delta[s] += 1
+
+    def propensity(self, box_state, box_idx):
+        return self.rate[box_idx] * box_state[self.species_from[0]] * box_state[self.species_from[1]]
+
+    def __str__(self) -> str:
+        return f"{self.species_names[self.species_from[0]]} + {self.species_names[self.species_from[1]]} -> " \
+            f"{self.species_names[self.species_to[0]]} + {self.species_names[self.species_to[1]]} "
+
+    def __repr__(self):
+        string = "kmc.DoubleConversion"
+        string += "(from " + str(self.species_from) + ", to " + str(self.species_to) + ", rate " + str(self.rate) + ")"
+        return string
+
 
 class Fusion3To2(Reaction):
     def __init__(self, species_from, species_to, rate, n_species, n_boxes, species_names):
@@ -238,13 +265,14 @@ class Fusion3To2(Reaction):
 
     def __str__(self) -> str:
         return f"{self.species_names[self.species_from[0]]} + {self.species_names[self.species_from[1]]} + " \
-               f"{self.species_names[self.species_to[2]]} -> {self.species_names[self.species_to[0]]} " \
-               f"+ {self.species_names[self.species_to[1]]}"
+            f"{self.species_names[self.species_to[2]]} -> {self.species_names[self.species_to[0]]} " \
+            f"+ {self.species_names[self.species_to[1]]}"
 
     def __repr__(self):
         string = "kmc.Fusion3To2"
         string += "(from " + str(self.species_from) + ", to " + str(self.species_to) + ", rate " + str(self.rate) + ")"
         return string
+
 
 class TrajectoryConfig(object):
     def __init__(self, types, reactions):
@@ -388,6 +416,14 @@ class ReactionDiffusionSystem:
         species_from = [self._id_from_name(n) for n in species_from]
         species_to = [self._id_from_name(n) for n in species_to]
         reaction = Fusion3To2(species_from, species_to, rate, self.n_species, self.n_boxes, self._species_names)
+        self._reactions.append(reaction)
+        self._n_reactions = len(self._reactions)
+
+    def add_double_conversion(self, species_from, species_to, rate):
+        self._assure_not_finalized()
+        species_from = [self._id_from_name(n) for n in species_from]
+        species_to = [self._id_from_name(n) for n in species_to]
+        reaction = DoubleConversion(species_from, species_to, rate, self.n_species, self.n_boxes, self._species_names)
         self._reactions.append(reaction)
         self._n_reactions = len(self._reactions)
 
