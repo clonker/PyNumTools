@@ -2,7 +2,6 @@ import numpy as _np
 import pynumtools.finite_differences as _fd
 from scipy import sparse as _sparse
 from scipy.sparse import linalg as _splin
-from pynumtools.lgmres import lgmres as _lgmres
 
 
 def _cumtrapz_operator(xs):
@@ -86,6 +85,7 @@ def tv_derivative(data, xs, u0=None, alpha=10., maxit=1000, linalg_solver_maxit=
             if solver == 'lgmres_scipy':
                 s, info_i = _splin.lgmres(A=alpha * L + ATA, b=-g, x0=u, tol=tol, maxiter=linalg_solver_maxit, outer_k=7)
             else:
+                from pynumtools.lgmres import lgmres as _lgmres
                 s = _lgmres(A=alpha * L + ATA, b=-g, x0=u, tol=tol, maxiter=linalg_solver_maxit)
         elif solver == 'bicgstab':
             [s, info_i] = _splin.bicgstab(A=alpha * L + ATA, b=-g, x0=u, tol=tol, maxiter=linalg_solver_maxit)
@@ -113,18 +113,16 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     noise_variance = .08 * .08
     x0 = _np.arange(0, 2.0 * _np.pi, 0.005)
-    line = _np.linspace(-1., 1., num=len(x0))
+    # line = _np.linspace(-1., 1., num=len(x0))
 
-    #testf = _np.array([_np.sin(x) for x in x0])
+    testf = _np.array([_np.sin(x) for x in x0])
     #testf = _np.array([0 if i < (len(x0)//2) else 1 for i in range(len(x0))])
-    testf = _np.abs(line)
+    #testf = _np.abs(line)
     testf = testf + _np.random.normal(0.0, _np.sqrt(noise_variance), x0.shape)
     fd = _np.gradient(testf)
     true_deriv = [_np.cos(x) for x in x0]
+    # true_deriv = [-1. if x <= 0 else 1. for x in line]
 
-    tv_deriv0 = tv_derivative(testf, x0, alpha=.001, maxit=50, linalg_solver_maxit=5e6,
-                              verbose=True, solver='np', tol=1e-12)
-    tv_deriv0_back = .5 * (tv_deriv0[1:] + tv_deriv0[:-1])
     #tv_deriv = tv_derivative(testf, x0, alpha=.01, maxit=20, linalg_solver_maxit=5e6,
     #                          verbose=True, solver='spsolve', tol=1e-12)
     #tv_deriv_back = .5 * (tv_deriv[1:] + tv_deriv[:-1])
@@ -133,13 +131,17 @@ if __name__ == '__main__':
     #tv_deriv2_back = .5 * (tv_deriv2[1:] + tv_deriv2[:-1])
 
     plt.figure(figsize=(15, 15))
-    plt.plot(x0, testf, label='f')
-    plt.plot(x0, true_deriv, label='df')
-    plt.plot(x0, fd, label='fd')
+    plt.plot(x0, testf, label='f(x)')
+    plt.plot(x0, true_deriv, label='derivative f')
+    plt.plot(x0, fd, label='finite differences')
 
     #plt.plot(x0, tv_deriv_back, label='tv, alpha=.01')
     #plt.plot(x0, tv_deriv2_back, label='tv, alpha=.5')
-    plt.plot(x0, tv_deriv0_back, label='tv, alpha=.001')
+    for alpha in [1., .1, .01, .001, .0001, ]:
+        tv_deriv0 = tv_derivative(testf, x0, alpha=alpha, maxit=500, linalg_solver_maxit=5e6,
+                                  verbose=True, solver='np', tol=1e-9)
+        tv_deriv0_back = .5 * (tv_deriv0[1:] + tv_deriv0[:-1])
+        plt.plot(x0, tv_deriv0_back, label=f'tv deriv, alpha={alpha:.4f}')
 
     plt.legend()
     plt.show()
