@@ -2,14 +2,20 @@ cmake_minimum_required(VERSION 2.8.12)
 project(pynumtools_binding)
 
 enable_language(C CXX)
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(BLAS)
 find_package(LAPACK)
 
-add_subdirectory(lib/pybind11)
+find_package(pybind11 REQUIRED)
 
 set(spdlog_include_dir "${CMAKE_CURRENT_SOURCE_DIR}/lib/spdlog/include")
 set(eigen_include_dir "${CMAKE_CURRENT_SOURCE_DIR}/lib/eigen-git-mirror")
+
+
+if(MSVC)
+    add_compile_options(/EHsc /bigobj)
+endif()
 
 set(sources ${CMAKE_CURRENT_SOURCE_DIR}/cpp/binding.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/lgmres.h ${CMAKE_CURRENT_SOURCE_DIR}/cpp/lgmres.cpp
