@@ -70,5 +70,5 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     cmdclass=dict(build_ext=CMakeBuild),
-    install_requires=['numpy']
+    install_requires=['numpy', 'pybind11', 'cmake', 'eigen']
 )
