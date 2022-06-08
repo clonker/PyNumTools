@@ -1,0 +1,17 @@
+
+
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "scikit-build>=0.13",
+    "cython",
+    "numpy>=1.14",
+    "cmake>=3.22",
+    "toml",
+    "scipy",
+    "eigen",
+    "pybind11",
+    "ninja"
+]
+build-backend = "setuptools.build_meta"
