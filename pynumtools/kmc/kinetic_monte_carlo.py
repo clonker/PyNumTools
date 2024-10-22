@@ -82,7 +82,7 @@ class Reaction:
     def __init__(self, rate, n_species, n_boxes, species_names):
         assert len(rate) == n_boxes
         self.rate = rate
-        self.stoichiometric_delta = np.zeros(n_species, dtype=np.int)
+        self.stoichiometric_delta = np.zeros(n_species, dtype=int)
         self.species_names = species_names
 
     def __repr__(self):
@@ -334,7 +334,7 @@ class ReactionDiffusionSystem:
         assert n_frames is not None or timestep is not None
         counts, times = self.convert_events_to_time_series2(time_step=timestep)
         # flatten out spatial dimension and convert to float
-        counts = np.sum(counts, axis=1, dtype=np.float64)
+        counts = np.sum(counts, axis=1, dtype=float)
         config = self.get_trajectory_config()
         return counts, times, config
 
@@ -486,7 +486,7 @@ class ReactionDiffusionSystem:
                             propensity = self._diffusivity[s][i, j] * self._state[i, s]
                             if propensity > 0.:
                                 cumulative += propensity
-                                delta = np.zeros(self._n_boxes, dtype=np.int)
+                                delta = np.zeros(self._n_boxes, dtype=int)
                                 delta[i] = -1
                                 delta[j] = +1
                                 shall_interrupt = interruptive_diff(s, i, j)
@@ -552,9 +552,9 @@ class ReactionDiffusionSystem:
     def convert_events_to_time_series2(self, time_step):
         n_frames = int(math.floor((self._time_list[-1] - self._time_list[0]) / time_step))
         result = np.zeros((n_frames, self._n_boxes, self._n_species), dtype=np.uint32)
-        times = np.linspace(0, n_frames * time_step, num=n_frames, endpoint=False, dtype=np.float64)
+        times = np.linspace(0, n_frames * time_step, num=n_frames, endpoint=False, dtype=float)
 
-        times_list = np.array(self._time_list, dtype=np.float64)
+        times_list = np.array(self._time_list, dtype=float)
         state_list = np.array(self._state_list, dtype=np.uint32)
         convert_to_timeseries(result, times, times_list, state_list)
 
@@ -592,7 +592,7 @@ class ReactionDiffusionSystem:
             n_frames = math.ceil((self._time_list[-1] - self._time_list[0]) / time_step)
         log.info("got time step {} and n_frames {}".format(time_step, n_frames))
 
-        result = np.zeros((n_frames, self._n_boxes, self._n_species), dtype=np.int)
+        result = np.zeros((n_frames, self._n_boxes, self._n_species), dtype=int)
         times = np.linspace(self._time_list[0], self._time_list[-1], n_frames)
         current_t = self._time_list[0]
         last_passed_event_time_idx = 0
